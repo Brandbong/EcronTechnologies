@@ -11,14 +11,51 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true
+    detectSessionInUrl: true,
+    flowType: 'pkce'
   }
 });
+
+// Auth event listeners for debugging (remove in production)
+if (import.meta.env.DEV) {
+  supabase.auth.onAuthStateChange((event, session) => {
+    console.log('Auth event:', event, session?.user?.email);
+  });
+}
 
 // Database types
 export interface Database {
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          id: string;
+          email: string;
+          full_name: string | null;
+          avatar_url: string | null;
+          role: 'user' | 'admin' | 'instructor';
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          email: string;
+          full_name?: string | null;
+          avatar_url?: string | null;
+          role?: 'user' | 'admin' | 'instructor';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          full_name?: string | null;
+          avatar_url?: string | null;
+          role?: 'user' | 'admin' | 'instructor';
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       contact_messages: {
         Row: {
           id: string;
